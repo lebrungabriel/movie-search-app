@@ -2,7 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["image.tmdb.org", "www.wallpaperflare.com", "wallpapercave.com"],
+    domains: ["image.tmdb.org"],
+  },
+  env: {
+    API_KEY: process.env.API_KEY,
   },
 };
 

@@ -1,67 +1,86 @@
-import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DetailMovie from "./DetailMovie";
-import List from "./List";
-import Navbar from "./Navbar";
+import Filter from "./Filter";
+import ListItem from "./ListItem";
 import SearchBar from "./SearchBar.jsx";
 
-function Home() {
-  const [lastMovie, setLastMovie] = useState({});
+import { useDispatch } from "react-redux";
+import { addMovieToStore, removeMovieToStore } from "../reducers/movies";
 
-  const selectedMovie = (
-    title,
-    overview,
-    image,
-    date,
-    voteAverage,
-    voteCount
-  ) => {
-    console.log("CLICKED", title, overview, image, date, voteAverage);
-    setLastMovie({ title, overview, image, date, voteAverage, voteCount });
+function Home() {
+  const [moviesList, setMoviesList] = useState([]);
+
+  const [selectedFilter, setSelectedFilter] = useState("popular");
+
+  const dispatch = useDispatch();
+
+  const listMovies = () => {
+    fetch(
+      `https://api.themoviedb.org/3/movie/${selectedFilter}?api_key=${process.env.API_KEY}`
+    )
+      .then((response) => response.json())
+      .then((data) => setMoviesList(data.results));
   };
 
-  // console.log("LAST MOVIE", lastMovie);
+  const getDetails = (movie) => {
+    dispatch(removeMovieToStore());
+    dispatch(addMovieToStore(movie));
+  };
+
+  useEffect(() => {
+    listMovies();
+  }, [selectedFilter]);
 
   return (
     <>
-      {/* <div className="w-screen h-screen relative flex justify-start items-center">
-        <Image
-          src="https://wallpapercave.com/wp/wp10759820.jpg"
-          alt="hero-picture"
-          objectFit="cover"
-          layout="fill"
-        />
-        <div className="flex flex-col items-start justify-evenly h-[300px] absolute left-20">
-          <div>
-            <h1 className="uppercase font-extrabold text-transparent text-4xl tracking-widest bg-clip-text bg-gradient-to-r from-blue-200 to-white">
-              FleetMovie App
-            </h1>
-            <p className="text-white text-sm mt-2 tracking-widest">
-              Browse through thousands of movies...
-            </p>
-          </div>
-          <button className="bg-transparent text-white border border-white px-20 py-2 rounded-xl tracking-widest ">
-            Discover
-          </button>
-        </div>
-      </div> */}
       <div className="w-screen h-screen flex flex-row items-center">
         <div className="w-[45%] h-screen flex flex-col p-4 justify-evenly">
-          <div className="w-full h-[80px] bg-white shadow-md flex justify-evenly items-center">
+          <div className="w-full h-[150px] bg-white shadow-md flex flex-col justify-evenly items-center">
             <SearchBar />
+            <div className="w-full flex flex-row justify-evenly">
+              <Filter
+                category="Popular"
+                filterHandler={() => {
+                  setSelectedFilter("popular");
+                  listMovies();
+                }}
+                textColor={
+                  selectedFilter === "popular" ? "text-black" : "text-zinc-400"
+                }
+              />
+              <Filter
+                category="Top rated"
+                filterHandler={() => {
+                  setSelectedFilter("top_rated");
+                  listMovies();
+                }}
+                textColor={
+                  selectedFilter === "top_rated"
+                    ? "text-black"
+                    : "text-zinc-400"
+                }
+              />
+            </div>
           </div>
-          <List selectedMovie={selectedMovie} />
+          <div className="w-full h-[500px] flex flex-col bg-white shadow-xl border border-gray-100 p-4">
+            <div className="overflow-auto">
+              {moviesList.map((movie, id) => {
+                return (
+                  <ListItem
+                    title={movie.title}
+                    poster={movie.poster_path}
+                    key={id}
+                    onClick={() => getDetails(movie)}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          {/* <List selectedMovie={selectedMovie} /> */}
         </div>
 
         <div className="w-[55%] h-screen">
-          <DetailMovie
-            title={lastMovie.title}
-            overview={lastMovie.overview}
-            image={lastMovie.image}
-            date={lastMovie.date}
-            voteAverage={lastMovie.voteAverage}
-            voteCount={lastMovie.voteCount}
-          />
+          <DetailMovie />
         </div>
       </div>
     </>
