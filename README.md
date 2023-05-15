@@ -22,8 +22,8 @@ The project has the following file structure:
 
 To run the Movie Search App on your local machine, follow these steps:
 
-1. Clone the repository:
-2. Move to the repository: cd movie-search-app
+1. Clone the repository: git clone <repository-url>
+2. Move into the project: cd movie-search-app
 3. Install dependencies: yarn install or npm install depending on which package manager you're using
 4. Set up an API key from The Movie Database (TMDB)
 5. Create a .env file in the root directory of the project
