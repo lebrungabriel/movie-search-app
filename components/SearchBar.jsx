@@ -4,19 +4,22 @@ import { useDispatch } from "react-redux";
 import { addMovieToStore, removeMovieToStore } from "../reducers/movies";
 
 const SearchBar = () => {
+  // State to hold the search input value
   const [searchMovie, setSearchMovie] = useState("");
+
   const dispatch = useDispatch();
 
   const searchMoviehandler = () => {
+    // Fetch movie data based on the search query
     fetch(
       `https://api.themoviedb.org/3/search/movie?api_key=${process.env.API_KEY}&query=${searchMovie}`
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("DATE FROM SEARCH BAR ... : ", data.results[0]);
-        // setSearchSelectedMovie(data.results[0]);
+        // Dispatch actions to remove existing movie and add the first result to the store
         dispatch(removeMovieToStore());
         dispatch(addMovieToStore(data.results[0]));
+        // Reset the search input value
         setSearchMovie("");
       });
   };
@@ -36,7 +39,7 @@ const SearchBar = () => {
       </div>
       <button
         onClick={() => searchMoviehandler()}
-        className="py-2 px-10 bg-gradient-to-r from-[#E8DBFC] to-[#F8F9D2] text-black rounded-md hover:shadow-md"
+        className="py-2 px-10 bg-gradient-to-r from-[#3E3D3D] to-[#272727] text-white rounded-md hover:shadow-md"
       >
         Search
       </button>

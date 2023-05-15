@@ -9,12 +9,12 @@ import { addMovieToStore, removeMovieToStore } from "../reducers/movies";
 
 function Home() {
   const [moviesList, setMoviesList] = useState([]);
-
   const [selectedFilter, setSelectedFilter] = useState("popular");
 
   const dispatch = useDispatch();
 
   const listMovies = () => {
+    // Fetch movie data from API based on the selected filter
     fetch(
       `https://api.themoviedb.org/3/movie/${selectedFilter}?api_key=${process.env.API_KEY}`
     )
@@ -23,11 +23,13 @@ function Home() {
   };
 
   const getDetails = (movie) => {
+    // Dispatch actions to update the selected movie in Redux store
     dispatch(removeMovieToStore());
     dispatch(addMovieToStore(movie));
   };
 
   useEffect(() => {
+    // Fetch movie data when the selected filter changes
     listMovies();
   }, [selectedFilter]);
 
@@ -35,8 +37,10 @@ function Home() {
     <>
       <div className="w-screen h-screen flex flex-row items-center">
         <div className="w-[45%] h-screen flex flex-col p-4 justify-evenly">
+          {/* Search Bar */}
           <div className="w-full h-[150px] bg-white shadow-md flex flex-col justify-evenly items-center">
             <SearchBar />
+            {/* Filter buttons */}
             <div className="w-full flex flex-row justify-evenly">
               <Filter
                 category="Popular"
@@ -62,6 +66,7 @@ function Home() {
               />
             </div>
           </div>
+          {/* Movie list */}
           <div className="w-full h-[500px] flex flex-col bg-white shadow-xl border border-gray-100 p-4">
             <div className="overflow-auto">
               {moviesList.map((movie, id) => {
@@ -76,9 +81,9 @@ function Home() {
               })}
             </div>
           </div>
-          {/* <List selectedMovie={selectedMovie} /> */}
         </div>
 
+        {/* Selected movie details */}
         <div className="w-[55%] h-screen">
           <DetailMovie />
         </div>
